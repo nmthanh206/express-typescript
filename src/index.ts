@@ -13,7 +13,7 @@ import CustomError from './utils/customError';
 dotenv.config({ path: '.env' });
 
 // Connect to MongoDB database
-mongoose.connect(process.env.MONGODB_URL as string).then(() => console.log('\x1bDB connection successful!\x1b[0m'));
+mongoose.connect(process.env.MONGODB_URL as string).then(() => console.log('\x1b[32mDB connection successful!\x1b[0m'));
 
 // Create an Express application
 const app = express();
