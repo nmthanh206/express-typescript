@@ -97,6 +97,7 @@ const rules = {
   'class-methods-use-this': 0,
   '@typescript-eslint/indent': 0,
   'no-unused-vars': 0,
+  '@typescript-eslint/ban-types': 0,
   '@typescript-eslint/explicit-member-accessibility': [
     0,
     {
@@ -132,7 +133,7 @@ const languageOptions = {
 
 export default tseslint.config(
   {
-    ignores: ['src/athenaHealth/types', 'src/types/kysely-codegen.ts'],
+    ignores: [],
   },
   ...fixupConfigRules(
     compat.extends(
