@@ -2,13 +2,13 @@ import { StatusCodes } from 'http-status-codes';
 import jwt from 'jsonwebtoken';
 
 import { accessTokenKey } from '@/constant';
+import type { PayloadJWT } from '@/middleware/authMiddleware';
 import PatientModel from '@/models/Patient';
 import type { Controller } from '@/types';
 import { asyncHandler } from '@/utils/asyncHandler';
 import CustomError from '@/utils/customError';
 import { objectEntries } from '@/utils/typescriptEnhance';
-// eslint-disable-next-line @typescript-eslint/naming-convention
-const _patientController = {
+const rawPatientController = {
   login: async (req, res) => {
     const { email, password } = req.body;
 
@@ -21,7 +21,9 @@ const _patientController = {
       throw new CustomError('Password is incorrect', StatusCodes.UNAUTHORIZED);
     }
 
-    const token = jwt.sign({ email: user.email }, process.env.JWT_SECRET as string, { expiresIn: '1d' });
+    const token = jwt.sign({ email: user.email, sub: user.id } as PayloadJWT, process.env.JWT_SECRET as string, {
+      expiresIn: process.env.JWT_EXPIRED,
+    });
     res.cookie(accessTokenKey, token);
     res.json({ accessToken: token });
   },
@@ -38,12 +40,12 @@ const _patientController = {
   },
 } satisfies Controller;
 
-const patientController = objectEntries(_patientController).reduce(
+// Wrap each method in asyncHandler to handle errors
+const patientController = objectEntries(rawPatientController).reduce(
   (pre, [key, method]) => {
     pre[key] = asyncHandler(method);
     return pre;
   },
-  {} as Record<keyof typeof _patientController, any>,
+  {} as Record<keyof typeof rawPatientController, any>,
 );
-
 export { patientController };

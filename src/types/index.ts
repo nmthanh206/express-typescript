@@ -1,3 +1,3 @@
-import type { NextFunction, Request, Response } from 'express';
+import type { RequestHandler } from 'express';
 
-export type Controller = Record<string, (req: Request, res: Response, next: NextFunction) => any>;
+export type Controller = Record<string, RequestHandler>;
