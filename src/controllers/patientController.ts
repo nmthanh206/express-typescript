@@ -4,11 +4,9 @@ import jwt from 'jsonwebtoken';
 import { accessTokenKey } from '@/constant';
 import type { PayloadJWT } from '@/middleware/authMiddleware';
 import PatientModel from '@/models/Patient';
-import type { Controller } from '@/types';
-import { asyncHandler } from '@/utils/asyncHandler';
+import { createController } from '@/utils/createController';
 import CustomError from '@/utils/customError';
-import { objectEntries } from '@/utils/typescriptEnhance';
-const rawPatientController = {
+const patientController = createController({
   login: async (req, res) => {
     const { email, password } = req.body;
 
@@ -38,14 +36,6 @@ const rawPatientController = {
     const newPatient = await PatientModel.create({ firstname, lastname, email, phone, password });
     res.json(newPatient);
   },
-} satisfies Controller;
+});
 
-// Wrap each method in asyncHandler to handle errors
-const patientController = objectEntries(rawPatientController).reduce(
-  (pre, [key, method]) => {
-    pre[key] = asyncHandler(method);
-    return pre;
-  },
-  {} as Record<keyof typeof rawPatientController, any>,
-);
 export { patientController };
